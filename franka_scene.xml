@@ -1,0 +1,90 @@
+<mujoco model="franka_planning">
+	<compiler angle="radian"/>
+  <option gravity="0 0 -9.81" timestep="0.002">
+    <flag contact="enable"/>
+  </option>
+
+  <asset>
+    <texture name="skybox" type="skybox" builtin="gradient" rgb1=".4 .6 .8" rgb2="0 0 0"
+             width="800" height="800"/>
+    <texture name="grid" type="2d" builtin="checker" rgb1=".1 .2 .3" rgb2=".2 .3 .4"
+             width="300" height="300" mark="edge" markrgb=".2 .3 .4"/>
+    <material name="grid" texture="grid" texrepeat="4 4" reflectance=".2"/>
+  </asset>
+
+
+  <worldbody>
+    <light pos="0 0 3" dir="0 0 -1" directional="true"/>
+    <geom name="floor" type="plane" size="2 2 0.1" material="grid"/>
+
+    <!-- Table -->
+    <body name="table" pos="0.5 0 0.3">
+      <geom name="tabletop" type="box" size="0.4 0.5 0.02" rgba="0.6 0.4 0.2 1"
+            mass="10" contype="1" conaffinity="1"/>
+      <geom name="leg1" type="cylinder" fromto="-0.35 -0.45 -0.3 -0.35 -0.45 -0.02"
+            size="0.03" rgba="0.4 0.3 0.2 1"/>
+      <geom name="leg2" type="cylinder" fromto="0.35 -0.45 -0.3 0.35 -0.45 -0.02"
+            size="0.03" rgba="0.4 0.3 0.2 1"/>
+      <geom name="leg3" type="cylinder" fromto="-0.35 0.45 -0.3 -0.35 0.45 -0.02"
+            size="0.03" rgba="0.4 0.3 0.2 1"/>
+      <geom name="leg4" type="cylinder" fromto="0.35 0.45 -0.3 0.35 0.45 -0.02"
+            size="0.03" rgba="0.4 0.3 0.2 1"/>
+    </body>
+
+    <!-- Obstacle box on the table -->
+    <body name="obstacle" pos="0.5 0 0.42">
+      <geom name="obstacle_box" type="box" size="0.06 0.06 0.1"
+            rgba="0.9 0.2 0.2 1" mass="0.5" contype="1" conaffinity="1"/>
+    </body>
+
+    <!-- Franka Panda arm (simplified with primitives) -->
+    <body name="link0" pos="0 0 0" euler="0 0 0">
+      <geom name="link0_geom" type="cylinder" fromto="0 0 0 0 0 0.05" size="0.06" rgba="0.9 0.9 0.9 1" contype="1" conaffinity="1"/>
+      <body name="link1" pos="0 0 0.333">
+        <joint name="joint1" type="hinge" axis="0 0 1" range="-2.8973 2.8973" damping="1"/><!-- range="-2.8973 2.8973" -->
+        <geom name="link1_geom" type="capsule" fromto="0 0 -0.19 0 0 0.2" size="0.06" rgba="0.2 0.7 0.0 1" contype="1" conaffinity="1"/>
+        <body name="link2" pos="0 0 0.2">
+			<joint name="joint2" type="hinge" axis="0 1 0" range="-1.7628 1.7628" damping="1"/> <!-- range="-1.7628 1.7628" -->
+          <geom name="link2_geom_a" type="capsule" fromto="0 0 0 0 0.12 0" size="0.06" rgba="0.9 0.9 0.9 1" contype="1" conaffinity="1"/>
+          <geom name="link2_geom_b" type="capsule" fromto="0 0.12 0 0.0 0.12 0.3" size="0.05" rgba="0.9 0.0 0.9 1" contype="1" conaffinity="1"/>
+          <body name="link3" pos="0 0.12 0.3">
+            <joint name="joint3" type="hinge" axis="0 0 1" range="-2.8973 2.8973" damping="1"/><!-- range="2.8973 2.8973" -->
+            <geom name="link3_geom" type="capsule" fromto="0 0 0 0.0 0 0.1" size="0.05" rgba="0.5 0.5 0.5 1" contype="1" conaffinity="1"/>
+            <body name="link4" pos="0.0 0 0.2">
+				<joint name="joint4" type="hinge" axis="0 1 0" range="-3.0718 -0.3" damping="1"/> <!-- range="-3.0718 -0.3" -->
+              <geom name="link4_geom_a" type="capsule" fromto="0 0 0 0.0 0.0 0.2" size="0.05" rgba="0.1 0.1 0.0 1" contype="1" conaffinity="1"/>
+              <body name="link5" pos="0.0 0.0 0.2">
+                <joint name="joint5" type="hinge" axis="0 0 1" range="-2.8973 2.8973" damping="1"/><!-- range="2.8973 2.8973" -->
+                <geom name="link5_geom" type="capsule" fromto="0 0 0 0 0.0 0.2" size="0.04" rgba="0.0 0.9 0.0 1" contype="1" conaffinity="1"/>
+                <body name="link6" pos="0 0.0 0.2">
+                  <joint name="joint6" type="hinge" axis="0 1 0" range="-0.8973 0.8973" damping="1"/>
+                  <geom name="link6_geom_a" type="capsule" fromto="0 0 0 0 -0.088 0" size="0.03" rgba="0.0 0.0 0.9 1" contype="1" conaffinity="1"/>
+                  <geom name="link6_geom_b" type="capsule" fromto="0 -0.088 0 0 -0.088 0.2" size="0.03" rgba="0.0 0.0 0.9 1" contype="1" conaffinity="1"/>
+                  <body name="link7" pos="0 -0.088 0.2">
+                    <joint name="joint7" type="hinge" axis="0 0 1" range="-0.8973 0.8973" damping="1"/><!-- range="2.8973 2.8973" -->
+                    <geom name="link7_geom_a" type="capsule" fromto="0 0 0 0 0 0.107" size="0.02" rgba="1.0 0.3 0.3 1" contype="1" conaffinity="1"/>
+                    <geom name="link7_geom_b" type="capsule" fromto="0 -0.05 0.107 0 0.05 0.107" size="0.02" rgba="0.7 0.3 0.3 1" contype="1" conaffinity="1"/>
+                    <geom name="link7_geom_c" type="capsule" fromto="0 -0.05 0.107 0 -0.05 0.2" size="0.02" rgba="0.7 0.3 0.3 1" contype="1" conaffinity="1"/>
+                    <geom name="link7_geom_d" type="capsule" fromto="0 0.05 0.107 0 0.05 0.2" size="0.02" rgba="0.7 0.3 0.3 1" contype="1" conaffinity="1"/>
+                    <!-- End-effector site for visualization -->
+                    <site name="end_effector" pos="0 0 0.2" size="0.01" rgba="1 1 1 1"/>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <motor joint="joint1" ctrlrange="-87 87"/>
+    <motor joint="joint2" ctrlrange="-87 87"/>
+    <motor joint="joint3" ctrlrange="-87 87"/>
+    <motor joint="joint4" ctrlrange="-87 87"/>
+    <motor joint="joint5" ctrlrange="-12 12"/>
+    <motor joint="joint6" ctrlrange="-12 12"/>
+    <motor joint="joint7" ctrlrange="-12 12"/>
+  </actuator>
+</mujoco>
